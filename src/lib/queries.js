@@ -99,3 +99,66 @@ export const GET_SITE_INFO = gql`
     }
   }
 `;
+
+export const GET_PAGE_DATA = gql`
+  query GetPage($id: ID!) {
+    page(id: $id, idType: URI) {
+      author {
+        node {
+          avatar {
+            url
+          }
+          uri
+          name
+        }
+      }
+      content(format: RENDERED)
+      featuredImage {
+        node {
+          mediaItemUrl
+          uri
+          srcSet
+          sourceUrl
+        }
+      }
+      modifiedGmt
+      title
+      uri
+    }
+  }
+`;
+
+export const GET_PAGE_BY_SLUG = gql`
+  query GetPageBySlug($slug: SLUG!) {
+    pageBy(uri: $slug) {
+      id
+      title
+      content
+      uri
+      modifiedGmt
+      featuredImage {
+        node {
+          mediaItemUrl
+          uri
+          srcSet
+          sourceUrl
+        }
+      }
+      author {
+        node {
+          avatar {
+            url
+          }
+          uri
+          name
+        }
+      }
+      prevPage: pageBy {
+        uri
+      }
+      nextPage: pageBy(relation: NEXT) {
+        uri
+      }
+    }
+  }
+`;

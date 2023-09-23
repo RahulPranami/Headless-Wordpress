@@ -1,12 +1,26 @@
 import Header from "@/components/Header";
 import Image from "next/image";
+import { client } from "@/lib/apollo";
+import { GET_SITE_INFO } from "@/lib/queries";
+import he from "he";
+
+export async function generateMetadata({ params }) {
+  const siteData = await client.query({
+    query: GET_SITE_INFO,
+  });
+
+  const siteInfo = siteData?.data?.generalSettings;
+  return {
+    title: he.decode(siteInfo.title),
+    description: he.decode(siteInfo.description),
+  };
+}
 
 export default function Home() {
   return (
     <>
-      <Header />
+      
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
-
         <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
           <a
             href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
