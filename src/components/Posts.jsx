@@ -1,15 +1,40 @@
 import { client } from "@/lib/apollo";
-import { GET_POSTS, GET_MENU_ITEMS, GET_SITE_INFO } from "@/lib/queries";
+import {
+  GET_POSTS,
+  GET_MENU_ITEMS,
+  GET_SITE_INFO,
+  GET_END_CURSOR,
+} from "@/lib/queries";
 import PostCard from "./PostCard";
+import PageNavigation from "./PageNavigation";
 
-export default async function Posts() {
+export default async function Posts({ pageNo = 1 }) {
+  const page = parseInt(pageNo);
+  const postsPerPage = parseInt(process.env.POSTS_PER_PAGE);
+  const postsCount = parseInt(
+    pageNo !== 1 ? pageNo * postsPerPage : postsPerPage
+  );
+  let endCursor = "";
+
+  if (1 !== pageNo) {
+    const endCursorRes = await client.query({
+      query: GET_END_CURSOR,
+      variables: {
+        first: postsCount,
+      },
+    });
+    endCursor = endCursorRes?.data?.posts?.pageInfo?.endCursor;
+  }
+
   const response = await client.query({
     query: GET_POSTS,
+    variables: {
+      after: endCursor,
+      first: parseInt(postsPerPage),
+    },
   });
-  //   const { title, content, excerpt, uri, date } = response?.data?.posts?.nodes;
-  const posts = response?.data?.posts?.nodes;
 
-  //   const pageInfo = response?.data?.posts?.pageInfo;
+  const posts = response?.data?.posts?.nodes;
   const { hasPreviousPage, hasNextPage } = response?.data?.posts?.pageInfo;
 
   return (
@@ -19,35 +44,11 @@ export default async function Posts() {
           return <PostCard key={post.id} {...post} />;
         })}
       </div>
-      <div className="w-full px-4 flex items-center justify-between pt-20">
-        {/* {hasPreviousPage && ( */}
-        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <a href={`/page/2`} className="mb-3 text-2xl font-semibold">
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              &lt;-
-            </span>
-            {"   "}
-            Previous Page
-          </a>
-        </div>
-        {/* )} */}
-        {/* {hasNextPage && ( */}
-        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <a href={`/page/2`} className="mb-3 text-2xl font-semibold">
-            Next Page
-            {"   "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </a>
-        </div>
-
-        {/* )} */}
-      </div>
-
-      {/* <PageNavigation>
-
-      </PageNavigation> */}
+      <PageNavigation
+        page={page}
+        hasNext={hasNextPage}
+        hasPrev={hasPreviousPage}
+      />
     </>
   );
 }

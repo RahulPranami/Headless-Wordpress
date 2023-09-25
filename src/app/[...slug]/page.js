@@ -14,11 +14,14 @@ export async function generateMetadata({ params }) {
       id: slug,
     },
   });
-  const { title } = response?.data?.page;
-
-  return {
-    title: title,
-  };
+  const siteInfo = response?.data?.page;
+  console.log(siteInfo);
+  // if (siteInfo.title == null) {
+  //   return;
+  // }
+  // return {
+  //   title: title,
+  // };
 }
 
 export default async function Page({ params }) {
@@ -42,6 +45,9 @@ export default async function Page({ params }) {
 
   // const pageDetails = response?.data?.page;
   const { title, content, featuredImage, modifiedGmt } = response?.data?.page;
+  // const pageData = response?.data?.page;
+  // console.log(pageData);
+  // const { title, content, featuredImage, modifiedGmt } = pageData;
 
   return (
     <>

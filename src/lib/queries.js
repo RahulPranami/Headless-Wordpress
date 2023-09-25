@@ -56,22 +56,24 @@ export const GET_MENU_ITEMS = gql`
   }
 `;
 
-export const GET_POSTS = gql`
-  query GetPosts {
-    posts {
-      nodes {
-        title
-        content
-        uri
-        date
-      }
-      pageInfo {
-        hasPreviousPage
-        hasNextPage
-      }
-    }
-  }
-`;
+// export const GET_POSTS = gql`
+//   query GetPosts {
+//     posts(first: 8) {
+//       nodes {
+//         title
+//         content
+//         uri
+//         date
+//         excerpt
+//         id
+//       }
+//       pageInfo {
+//         hasPreviousPage
+//         hasNextPage
+//       }
+//     }
+//   }
+// `;
 
 export const GET_POST = gql`
   query GetPost($id: ID!) {
@@ -158,6 +160,58 @@ export const GET_PAGE_BY_SLUG = gql`
       }
       nextPage: pageBy(relation: NEXT) {
         uri
+      }
+    }
+  }
+`;
+
+// export const GET_POSTS = gql`
+//   query GetPosts($count: COUNT!, $end: END_CURSOR) {
+//     posts(first: 8, endCursor: $end) {
+//       nodes {
+//         title
+//         content
+//         uri
+//         date
+//         excerpt
+//         id
+//       }
+//       pageInfo {
+//         hasPreviousPage
+//         hasNextPage
+//       }
+//     }
+//   }
+// `;
+
+export const GET_POSTS = gql`
+  query GetPosts($after: String, $first: Int) {
+    posts(after: $after, first: $first) {
+      nodes {
+        title
+        id
+        content
+        excerpt
+        uri
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+    }
+  }
+`;
+
+export const GET_END_CURSOR = gql`
+  query GetEndCursor($first: Int) {
+    posts(first: $first) {
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
       }
     }
   }

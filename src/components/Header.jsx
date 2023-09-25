@@ -40,6 +40,10 @@ export default async function Header() {
   const siteInfo = siteData?.data?.generalSettings;
   const menuItems = response?.data?.menuItems?.edges;
 
+  // if (!menuItems) {
+  //   return
+  // }
+
   return (
     <header className="sm:flex sm:justify-between py-3 px-4 border-b">
       <div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between w-full">
